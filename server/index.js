@@ -12,29 +12,37 @@ app.use(express.json());
 
 app.post('/api/checkout', async (req, res) => {
     try {
-        const { id, amount } = req.body;
+        const { id } = req.body;
 
-        const payment = await stripe.paymentIntents.create({
-            amount,
-            currency: "USD",
-            description: "Exotic animal",
-            payment_method: id,
-            confirm: true
-        })
+        // const payment = await stripe.paymentIntents.create({
+        //     amount,
+        //     currency: "USD",
+        //     description: "Exotic animal",
+        //     payment_method: id,
+        //     confirm: true
+        // })
 
         const customer = await stripe.customers.create({
-            description: 'My First Test Customer (created for API docs)',
+            description: 'My Second Test Customer',
             payment_method: id,
+            email: 'btorres@gca.digital',
+            name: 'Brian Torres'
         });
 
         console.log(customer);
-        console.log(payment);
+        // console.log(payment);
 
-        if (payment.status === 'succeeded') {
-            res.send({ message: 'Successful Payment', client_secret: payment.client_secret });
+        // if (payment.status === 'succeeded') {
+        //     res.send({ message: 'Successful Payment', client_secret: payment.client_secret });
+        // }
+        // else {
+        //     res.send({ message: payment.status });
+        // }
+         if (customer) {
+            res.send({ message: 'Successful Customer'});
         }
         else {
-            res.send({ message: payment.status });
+            res.send({ message: 'Unexpected error' });
         }
     } catch (error) {
         res.json({ message: error.raw.message });
